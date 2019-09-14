@@ -77,13 +77,14 @@ ipcMain.on('apikey', async (_e, apiKey) => {
 });
 
 // When Info is received
-ipcMain.on('info', (_e, interestsRaw, instances) => {
+ipcMain.on('info', async (_e, interestsRaw, instances) => {
   const interests = interestsRaw.map(interest => interest.tag);
+  const apiKey = await keytar.getPassword('lily-desktop', 'apiKey');
 
-  function startInstance() {
+  function startInstance(apiKey) {
     const worker = fork('./worker.js');
 
-    worker.send({ msg: 'interests', interests });
+    worker.send({ msg: 'interests', interests, apiKey });
 
     worker.on('message', msg => {
       console.log(msg);
@@ -96,7 +97,7 @@ ipcMain.on('info', (_e, interestsRaw, instances) => {
     });
   }
 
-  for (var i = 1; i <= instances; i++) startInstance();
+  for (var i = 1; i <= instances; i++) startInstance(apiKey);
 
   win.webContents.send('connected-complete', instances);
 });
