@@ -1,0 +1,23 @@
+{
+  "name": "lily-desktop",
+  "version": "1.0.0",
+  "description": "Lily for desktop",
+  "main": "index.js",
+  "repository": "https://github.com/LightYagami200/lily-desktop.git",
+  "author": "Light Yagami <abdulsammad200@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "rebuild": "electron-rebuild"
+  },
+  "dependencies": {
+    "apiai": "^4.0.3",
+    "keytar": "https://github.com/atom/node-keytar",
+    "threads": "^1.0.0-beta.6"
+  },
+  "devDependencies": {
+    "electron": "^6.0.8",
+    "electron-rebuild": "^1.8.6",
+    "eslint": "^6.3.0"
+  }
+}

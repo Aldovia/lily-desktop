@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Meta -->
+    <meta charset="UTF-8" />
+    <title>Lily Desktop</title>
+    <!-- ---- -->
+
+    <!-- Stylesheets -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/materialize.min.css" />
+    <link rel="stylesheet" href="../css/mstepper.min.css" />
+    <link rel="stylesheet" href="../css/main.css" />
+    <!-- ----------- -->
+  </head>
+  <body>
+    <!-- Main -->
+    <div class="container">
+      <h1 class="pacifico">Lily Desktop</h1>
+      <div class="card hide" id="info-box">
+        <div class="card-content">
+          <div class="row">
+            <div class="col s12 m6">
+              <i class="material-icons">
+                storage
+              </i>
+              <span class="info-label" id="instances-label">
+                0 Instances
+              </span>
+            </div>
+            <div class="col s12 m6">
+              <i class="material-icons">
+                hourglass_empty
+              </i>
+              <span class="info-label" id="timer-label">
+                0 Seconds
+              </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12 m6">
+              <i class="material-icons">
+                bookmark_border
+              </i>
+              <span class="info-label">
+                0 Reputation
+              </span>
+            </div>
+            <div class="col s12 m6">
+              <i class="material-icons">
+                monetization_on
+              </i>
+              <span class="info-label">
+                0 Coins
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="connect-btn-wrapper">
+        <a id="connect-btn" class="waves-effect waves-light btn blue"
+          ><i class="material-icons left">compare_arrows</i>Connect</a
+        >
+      </div>
+    </div>
+    <!-- ---- -->
+
+    <!-- Modal -->
+    <div id="info-modal" class="modal">
+      <div class="modal-content">
+        <ul class="stepper linear">
+          <!-- Step Interests -->
+          <li class="step active" id="interests-step">
+            <div class="step-title waves-effect">Interests</div>
+            <div class="step-content">
+              <div class="chips chips-initial" id="interests-chips"></div>
+              <div class="step-actions">
+                <button class="waves-effect waves-dark btn next-step blue">
+                  CONTINUE
+                </button>
+              </div>
+            </div>
+          </li>
+
+          <!-- Step Instances -->
+          <li class="step">
+            <div class="step-title waves-effect">Instances</div>
+            <div class="step-content">
+              <p class="range-field">
+                <input
+                  type="range"
+                  id="instances-amount"
+                  min="10"
+                  max="100"
+                  value="10"
+                  step="5"
+                />
+              </p>
+              <div class="step-actions">
+                <button
+                  id="submit-info"
+                  class="waves-effect waves-dark btn blue"
+                >
+                  START
+                </button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- ----- -->
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="../js/materialize.min.js"></script>
+    <script type="text/javascript" src="../js/mstepper.min.js"></script>
+    <script type="text/javascript" src="../js/app.js"></script>
+    <!-- ------- -->
+  </body>
+</html>
