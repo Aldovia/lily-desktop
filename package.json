@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "apiai": "^4.0.3",
+    "electron-store": "^5.0.0",
     "keytar": "https://github.com/atom/node-keytar",
+    "request": "^2.88.0",
     "threads": "^1.0.0-beta.6"
   },
   "devDependencies": {

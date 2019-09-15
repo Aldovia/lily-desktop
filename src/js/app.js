@@ -1,8 +1,10 @@
 const { ipcRenderer, shell } = require('electron');
 
 let connected = false;
-let timer;
 let secondsPerm = 0;
+let hours = 0;
+let rep = 0;
+let coins = 0;
 
 // Materialize Init
 document.addEventListener('DOMContentLoaded', function() {
@@ -17,12 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
     firstActive: 0 // this is the default
   });
 
-  ipcRenderer.on('apiKey-status', (_e, status) => {
-    console.log(status);
+  ipcRenderer.on('info-status', (_e, status) => {
     if (!status) {
       const elem =
         ' \
-      <li class="step active" id="invite-code-step"> \
+      <li class="step" id="invite-code-step"> \
       <div class="step-title waves-effect">Invite Code</div> \
       <div class="step-content"> \
         <div class="row"> \
@@ -43,7 +44,31 @@ document.addEventListener('DOMContentLoaded', function() {
       </div> \
     </li> \
     ';
+
+      const elem2 =
+        ' \
+      <li class="step active" id="discord-id-step"> \
+      <div class="step-title waves-effect">Discord ID</div> \
+      <div class="step-content"> \
+        <div class="row"> \
+          <div class="input-field col s12"> \
+            <i class="material-icons prefix">account_circle</i> \
+            <input id="discord_id" type="text" class="validate" minlength="11" maxlength="11  " required /> \
+            <label for="discord_id">Discord ID</label> \
+          </div> \
+        </div> \
+        <div class="step-actions"> \
+          <button \
+            class="waves-effect waves-dark btn next-step blue" \
+          > \
+            CONTINUE \
+          </button> \
+        </div> \
+      </div> \
+    </li> \
+    ';
       stepperInstance.activateStep(elem, 0);
+      stepperInstance.activateStep(elem2, 0);
       document.getElementById('interests-step').classList.remove('active');
     }
   });
@@ -85,8 +110,10 @@ ipcRenderer.on('captcha', () => {
 
 ipcRenderer.on('connected', () => {
   const modalInst = M.Modal.getInstance(document.getElementById('info-modal'));
-  if (document.getElementById('invite-code-step'))
+  if (document.getElementById('invite-code-step')) {
+    document.getElementById('discord-id-step').removeAttribute('style');
     document.getElementById('invite-code-step').removeAttribute('style');
+  }
   modalInst.open();
 });
 
@@ -97,7 +124,7 @@ ipcRenderer.on('connected-complete', (_e, instances) => {
   document.getElementById(
     'instances-label'
   ).innerHTML = `${instances} Instances`;
-  timer = setInterval(() => {
+  setInterval(() => {
     secondsPerm++;
 
     let seconds = secondsPerm;
@@ -117,6 +144,16 @@ ipcRenderer.on('connected-complete', (_e, instances) => {
   document.getElementById('connect-btn').innerHTML =
     '<i class="material-icons left">swap_horiz</i>Disconnect';
   M.toast({ html: 'Connected successfully' });
+});
+
+ipcRenderer.on('1hourplus', (_e, instances) => {
+  hours++;
+  rep += (instances / 10) * hours;
+  coins += instances * hours;
+  document.getElementById('rep-label').innerHTML = rep;
+  document.getElementById('coins-label').innerHTML = coins;
+  M.toast({ html: `+${(instances / 10) * hours} Rep` });
+  M.toast({ html: `+${instances * hours} Coins` });
 });
 
 // Listening for clicks
@@ -152,6 +189,7 @@ async function sendInfo() {
 // Validate Invite Code
 async function validateInviteCode(destroyFeedback) {
   const inviteCode = document.getElementById('invite_code').value;
+  const discordID = document.getElementById('discord_id').value;
   console.log(inviteCode);
   const resRaw = await fetch('http://lily-desktop-server.glitch.me/auth', {
     method: 'POST',
@@ -166,7 +204,7 @@ async function validateInviteCode(destroyFeedback) {
   const res = await resRaw.json();
   if (resRaw.status != 200) destroyFeedback(false);
   else {
-    ipcRenderer.send('apikey', res.apiKey);
+    ipcRenderer.send('apikey', res.apiKey, discordID);
     ipcRenderer.on('apiKey-saved', () => {
       destroyFeedback(true);
     });

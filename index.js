@@ -3,9 +3,19 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const { fork } = require('child_process');
 const keytar = require('keytar');
 const { EventEmitter } = require('events');
+const request = require('request');
+const Store = require('electron-store');
 const omegle = require('./lib/controller.js');
 
+const schema = {
+  userID: {
+    type: 'string'
+  }
+};
+
+const store = new Store({ schema });
 let win;
+let instancesG;
 
 function createWindow() {
   // Create the browser window.
@@ -62,11 +72,27 @@ ipcMain.on('connect', async () => {
     if (isConnected) {
       win.webContents.send('connecting');
       win.webContents.send(
-        'apiKey-status',
+        'info-status',
         (await keytar.getPassword('lily-desktop', 'apiKey')) ? true : false
       );
       if (await testOmegleCaptcha()) {
         win.webContents.send('connected');
+        setInterval(async () => {
+          // Earn rep & Coins
+          request.post(
+            'https://lily-desktop-server.glitch.me/timeplus',
+            {
+              json: {
+                userID: store.get('userID'),
+                auth: '35xGZ@]PvcxwQ-[2',
+                instances: instancesG
+              }
+            },
+            () => {
+              win.webContents.send('1hourplus', instancesG);
+            }
+          );
+        }, 1000 * 60 * 60);
       } else win.webContents.send('captcha');
     } else win.webContents.send('offline');
   });
@@ -78,8 +104,9 @@ ipcMain.on('disconnect', async () => {
 });
 
 // When API Key is received
-ipcMain.on('apikey', async (_e, apiKey) => {
+ipcMain.on('apikey', async (_e, apiKey, discordID) => {
   await keytar.setPassword('lily-desktop', 'apiKey', apiKey);
+  store.set('userID', discordID);
   win.webContents.send('apiKey-saved');
 });
 
@@ -87,6 +114,7 @@ ipcMain.on('apikey', async (_e, apiKey) => {
 ipcMain.on('info', async (_e, interestsRaw, instances) => {
   const interests = interestsRaw.map(interest => interest.tag);
   const apiKey = await keytar.getPassword('lily-desktop', 'apiKey');
+  instancesG = instances;
 
   function startInstance(apiKey) {
     const worker = fork('./worker.js');
