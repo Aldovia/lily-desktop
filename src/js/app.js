@@ -2,6 +2,7 @@ const { ipcRenderer, shell } = require('electron');
 
 let connected = false;
 let timer;
+let secondsPerm = 0;
 
 // Materialize Init
 document.addEventListener('DOMContentLoaded', function() {
@@ -96,7 +97,6 @@ ipcRenderer.on('connected-complete', (_e, instances) => {
   document.getElementById(
     'instances-label'
   ).innerHTML = `${instances} Instances`;
-  let secondsPerm = 0;
   timer = setInterval(() => {
     secondsPerm++;
 
@@ -126,6 +126,10 @@ document.addEventListener(
     // On Connect Button
     if (event.target.matches('#connect-btn') && !connected)
       ipcRenderer.send('connect');
+
+    // On Disconnect Button
+    if (event.target.matches('#connect-btn') && connected)
+      ipcRenderer.send('disconnect');
 
     if (event.target.matches('#submit-info')) sendInfo();
 

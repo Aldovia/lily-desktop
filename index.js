@@ -55,6 +55,8 @@ app.on('activate', () => {
 });
 
 // Listening for events
+// ======================
+// On Connect
 ipcMain.on('connect', async () => {
   checkInternet(async isConnected => {
     if (isConnected) {
@@ -68,6 +70,11 @@ ipcMain.on('connect', async () => {
       } else win.webContents.send('captcha');
     } else win.webContents.send('offline');
   });
+});
+
+// On Disconnect
+ipcMain.on('disconnect', async () => {
+  app.quit();
 });
 
 // When API Key is received
