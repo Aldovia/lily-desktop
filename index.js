@@ -89,6 +89,7 @@ ipcMain.on('connect', async () => {
               }
             },
             () => {
+              console.log('1 HOUR PLUS');
               win.webContents.send('1hourplus', instancesG);
             }
           );
@@ -125,7 +126,7 @@ ipcMain.on('info', async (_e, interestsRaw, instances) => {
       console.log(msg);
     });
     worker.on('exit', code => {
-      if (code !== 0) startInstance();
+      if (code !== 0) startInstance(apiKey);
     });
     worker.on('error', error => {
       console.log(error);
@@ -169,3 +170,9 @@ function testOmegleCaptcha() {
     });
   });
 }
+
+// Error Handling
+process.on('uncaughtException', function(error) {
+  // Handle the error
+  console.log(error);
+});

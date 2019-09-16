@@ -1,10 +1,10 @@
 {
   "name": "lily-desktop",
-  "version": "1.0.0",
+  "version": "0.1",
   "description": "Lily for desktop",
   "main": "index.js",
   "repository": "https://github.com/LightYagami200/lily-desktop.git",
-  "author": "Light Yagami <abdulsammad200@gmail.com>",
+  "author": "Aries Spring",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "electron": "^6.0.8",
+    "electron-builder": "^21.2.0",
     "electron-rebuild": "^1.8.6",
     "eslint": "^6.3.0"
   }

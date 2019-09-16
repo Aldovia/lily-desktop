@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="row"> \
           <div class="input-field col s12"> \
             <i class="material-icons prefix">account_circle</i> \
-            <input id="discord_id" type="text" class="validate" minlength="11" maxlength="11  " required /> \
+            <input id="discord_id" type="text" class="validate" minlength="18" maxlength="18" required /> \
             <label for="discord_id">Discord ID</label> \
           </div> \
         </div> \
@@ -148,10 +148,10 @@ ipcRenderer.on('connected-complete', (_e, instances) => {
 
 ipcRenderer.on('1hourplus', (_e, instances) => {
   hours++;
-  rep += (instances / 10) * hours;
-  coins += instances * hours;
-  document.getElementById('rep-label').innerHTML = rep;
-  document.getElementById('coins-label').innerHTML = coins;
+  rep += instances / 10;
+  coins += parseInt(instances);
+  document.getElementById('rep-label').innerHTML = `${rep} Reputation`;
+  document.getElementById('coins-label').innerHTML = `${coins} Coins`;
   M.toast({ html: `+${(instances / 10) * hours} Rep` });
   M.toast({ html: `+${instances * hours} Coins` });
 });
