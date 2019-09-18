@@ -16,6 +16,7 @@ const schema = {
 const store = new Store({ schema });
 let win;
 let instancesG;
+let hours = 0;
 
 function createWindow() {
   // Create the browser window.
@@ -90,6 +91,8 @@ ipcMain.on('connect', async () => {
             },
             () => {
               win.webContents.send('1hourplus', instancesG);
+              hours++;
+              if (hours === 2) app.quit();
             }
           );
         }, 1000 * 60 * 60);
@@ -137,6 +140,10 @@ ipcMain.on('info', async (_e, interestsRaw, instances) => {
   for (var i = 1; i <= instances; i++) startInstance(apiKey);
 
   win.webContents.send('connected-complete', instances);
+});
+
+ipcMain.on('captchaNotSolved', () => {
+  app.quit();
 });
 
 // Helper functions
