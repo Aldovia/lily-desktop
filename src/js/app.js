@@ -5,6 +5,8 @@ let secondsPerm = 0;
 let hours = 0;
 let rep = 0;
 let coins = 0;
+let captchaError = false;
+let captchaTimer;
 
 // Materialize Init
 document.addEventListener('DOMContentLoaded', function() {
@@ -141,6 +143,7 @@ ipcRenderer.on('connected-complete', (_e, instances) => {
   }, 1000);
 
   document.getElementById('info-box').classList.remove('hide');
+  document.getElementById('console').classList.remove('hide');
   document.getElementById('connect-btn').innerHTML =
     '<i class="material-icons left">swap_horiz</i>Disconnect';
   M.toast({ html: 'Connected successfully' });
@@ -154,6 +157,19 @@ ipcRenderer.on('1hourplus', (_e, instances) => {
   document.getElementById('coins-label').innerHTML = `${coins} Coins`;
   M.toast({ html: `+${(instances / 10) * hours} Rep` });
   M.toast({ html: `+${instances * hours} Coins` });
+});
+
+ipcRenderer.on('event', (_e, data) => {
+  const consoleCard = document.getElementById('console');
+  const node = document.createElement('p');
+  const msg = document.createTextNode(data);
+  node.appendChild(msg);
+  if (data === 'Error') node.classList.add('error');
+  consoleCard.appendChild(node);
+  consoleCard.scrollTop = consoleCard.scrollHeight;
+
+  if (data === 'Error' && !captchaError) requireCaptcha();
+  if (data !== 'Error' && captchaError) removeCaptchaTimer();
 });
 
 // Listening for clicks
@@ -209,4 +225,36 @@ async function validateInviteCode(destroyFeedback) {
       destroyFeedback(true);
     });
   }
+}
+
+// Require Captcha
+function requireCaptcha() {
+  captchaError = true;
+
+  M.toast({
+    html: `Captcha Required! Solve captcha in 5 minutes or Lily Desktop will exit`
+  });
+
+  shell.openExternal('https://omegle.com');
+  captchaTimer = setTimeout(() => {
+    ipcRenderer.send('captchaNotSolved');
+  }, 1000 * 60 * 5);
+}
+
+// Remove Captcha Timer
+function removeCaptchaTimer() {
+  captchaError = false;
+  M.toast({
+    html: `Captcha Solved!`
+  });
+  clearTimeout(captchaTimer);
+}
+
+// Helper function
+function countLines() {
+  var el = document.getElementById('content');
+  var divHeight = el.offsetHeight;
+  var lineHeight = parseInt(el.style.lineHeight);
+  var lines = divHeight / lineHeight;
+  alert('Lines: ' + lines);
 }

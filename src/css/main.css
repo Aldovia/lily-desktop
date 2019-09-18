@@ -67,3 +67,32 @@ h1 {
   font-weight: bold;
   padding-left: 5px;
 }
+
+#console {
+  margin-bottom: -20%;
+  margin-top: 10%;
+  height: 100px;
+  background-color: #121212;
+  overflow-y: scroll;
+}
+
+#console::-webkit-scrollbar {
+  width: 10px;
+  background-color: #232323;
+}
+
+#console::-webkit-scrollbar-thumb {
+  background-color: #555555;
+  border-radius: 30px;
+}
+
+#console p {
+  color: #fff;
+  opacity: 0.6;
+  margin: 0;
+}
+
+#console p.error {
+  color: #cf6679;
+  opacity: 0.87;
+}

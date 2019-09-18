@@ -89,7 +89,6 @@ ipcMain.on('connect', async () => {
               }
             },
             () => {
-              console.log('1 HOUR PLUS');
               win.webContents.send('1hourplus', instancesG);
             }
           );
@@ -122,12 +121,14 @@ ipcMain.on('info', async (_e, interestsRaw, instances) => {
 
     worker.send({ msg: 'interests', interests, apiKey });
 
-    worker.on('message', msg => {
-      console.log(msg);
+    worker.on('message', ({ msg, data }) => {
+      if (msg === 'event') win.webContents.send('event', data);
     });
+
     worker.on('exit', code => {
       if (code !== 0) startInstance(apiKey);
     });
+
     worker.on('error', error => {
       console.log(error);
     });
