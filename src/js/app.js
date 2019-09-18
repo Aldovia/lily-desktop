@@ -160,6 +160,7 @@ ipcRenderer.on('1hourplus', (_e, instances) => {
 });
 
 ipcRenderer.on('event', (_e, data) => {
+  console.log(`EVENT: ${data}`);
   const consoleCard = document.getElementById('console');
   const node = document.createElement('p');
   const msg = document.createTextNode(data);
@@ -258,3 +259,6 @@ function countLines() {
   var lines = divHeight / lineHeight;
   alert('Lines: ' + lines);
 }
+
+// ERROR HANDLING
+ipcRenderer.on('err', (_e, err) => console.log(err));

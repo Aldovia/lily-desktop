@@ -1,14 +1,16 @@
 {
   "name": "lily-desktop",
-  "version": "0.1",
+  "version": "1.0.0",
   "description": "Lily for desktop",
   "main": "index.js",
   "repository": "https://github.com/LightYagami200/lily-desktop.git",
-  "author": "Aries Spring",
+  "author": "Aldovia",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "rebuild": "electron-rebuild"
+    "rebuild": "electron-rebuild",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "dependencies": {
     "apiai": "^4.0.3",
@@ -22,5 +24,14 @@
     "electron-builder": "^21.2.0",
     "electron-rebuild": "^1.8.6",
     "eslint": "^6.3.0"
-  }
+  },
+  "build": {
+    "appId": "com.aldovia.lily-desktop",
+    "productName": "Lily Desktop"
+  },
+  "extraResources": [
+    "./lib",
+    "./worker.js"
+  ],
+  "postinstall": "electron-builder install-app-deps"
 }

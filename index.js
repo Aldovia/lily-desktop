@@ -6,6 +6,18 @@ const { EventEmitter } = require('events');
 const request = require('request');
 const Store = require('electron-store');
 const omegle = require('./lib/controller.js');
+const fs = require('fs');
+const path = require('path');
+
+let cwd = path.join(__dirname, '..');
+let cp_path;
+
+if (fs.existsSync(path.join(cwd, 'app.asar'))) {
+  cp_path = 'app.asar/worker.js';
+} else {
+  cp_path = './worker.js';
+  cwd = null;
+}
 
 const schema = {
   userID: {
@@ -32,7 +44,7 @@ function createWindow() {
   });
 
   // Disable Menu bar
-  // win.setMenu(null);
+  win.setMenu(null);
 
   // and load the index.html of the app.
   win.loadFile('./src/views/index.html');
@@ -78,24 +90,6 @@ ipcMain.on('connect', async () => {
       );
       if (await testOmegleCaptcha()) {
         win.webContents.send('connected');
-        setInterval(async () => {
-          // Earn rep & Coins
-          request.post(
-            'https://lily-desktop-server.glitch.me/timeplus',
-            {
-              json: {
-                userID: store.get('userID'),
-                auth: '35xGZ@]PvcxwQ-[2',
-                instances: instancesG
-              }
-            },
-            () => {
-              win.webContents.send('1hourplus', instancesG);
-              hours++;
-              if (hours === 2) app.quit();
-            }
-          );
-        }, 1000 * 60 * 60);
       } else win.webContents.send('captcha');
     } else win.webContents.send('offline');
   });
@@ -120,7 +114,9 @@ ipcMain.on('info', async (_e, interestsRaw, instances) => {
   instancesG = instances;
 
   function startInstance(apiKey) {
-    const worker = fork('./worker.js');
+    const worker = fork(cp_path, [], {
+      cwd: cwd
+    });
 
     worker.send({ msg: 'interests', interests, apiKey });
 
@@ -140,6 +136,25 @@ ipcMain.on('info', async (_e, interestsRaw, instances) => {
   for (var i = 1; i <= instances; i++) startInstance(apiKey);
 
   win.webContents.send('connected-complete', instances);
+
+  setInterval(async () => {
+    // Earn rep & Coins
+    request.post(
+      'https://lily-desktop-server.glitch.me/timeplus',
+      {
+        json: {
+          userID: store.get('userID'),
+          auth: '35xGZ@]PvcxwQ-[2',
+          instances: instancesG
+        }
+      },
+      () => {
+        win.webContents.send('1hourplus', instancesG);
+        hours++;
+        if (hours === 2) app.quit();
+      }
+    );
+  }, 1000 * 60 * 60);
 });
 
 ipcMain.on('captchaNotSolved', () => {
