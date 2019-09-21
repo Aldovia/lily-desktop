@@ -12,13 +12,13 @@ let captchaTimer;
 document.addEventListener('DOMContentLoaded', function() {
   const modalElems = document.querySelectorAll('.modal');
   M.Modal.init(modalElems, {
-    dismissible: false
+    dismissible: false,
   });
 
   const stepper = document.querySelector('.stepper');
   const stepperInstance = new MStepper(stepper, {
     // options
-    firstActive: 0 // this is the default
+    firstActive: 0, // this is the default
   });
 
   ipcRenderer.on('info-status', (_e, status) => {
@@ -79,15 +79,15 @@ document.addEventListener('DOMContentLoaded', function() {
   M.Chips.init(chipElems, {
     data: [
       {
-        tag: 'Anime'
+        tag: 'Anime',
       },
       {
-        tag: 'Otaku'
+        tag: 'Otaku',
       },
       {
-        tag: 'Weeb'
-      }
-    ]
+        tag: 'Weeb',
+      },
+    ],
   });
 });
 
@@ -151,12 +151,32 @@ ipcRenderer.on('connected-complete', (_e, instances) => {
 
 ipcRenderer.on('1hourplus', (_e, instances) => {
   hours++;
-  rep += instances / 10;
-  coins += parseInt(instances);
+  rep += instances < 20 ? 0.5 : instances < 50 ? 1 : instances < 100 ? 2 : 3;
+  coins += parseInt(
+    (instances < 20 ? 0.5 : instances < 50 ? 1 : instances < 100 ? 2 : 3) * 10
+  );
   document.getElementById('rep-label').innerHTML = `${rep} Reputation`;
   document.getElementById('coins-label').innerHTML = `${coins} Coins`;
-  M.toast({ html: `+${(instances / 10) * hours} Rep` });
-  M.toast({ html: `+${instances * hours} Coins` });
+  M.toast({
+    html: `+${(instances < 20
+      ? 0.5
+      : instances < 50
+      ? 1
+      : instances < 100
+      ? 2
+      : 3) * hours} Rep`,
+  });
+  M.toast({
+    html: `+${(instances < 20
+      ? 0.5
+      : instances < 50
+      ? 1
+      : instances < 100
+      ? 2
+      : 3) *
+      10 *
+      hours} Coins`,
+  });
 });
 
 ipcRenderer.on('event', (_e, data) => {
@@ -211,12 +231,12 @@ async function validateInviteCode(destroyFeedback) {
   const resRaw = await fetch('http://lily-desktop-server.glitch.me/auth', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       inviteCode: inviteCode,
-      auth: '35xGZ@]PvcxwQ-[2'
-    })
+      auth: '35xGZ@]PvcxwQ-[2',
+    }),
   });
   const res = await resRaw.json();
   if (resRaw.status != 200) destroyFeedback(false);
@@ -233,7 +253,7 @@ function requireCaptcha() {
   captchaError = true;
 
   M.toast({
-    html: `Captcha Required! Solve captcha in 5 minutes or Lily Desktop will exit`
+    html: `Captcha Required! Solve captcha in 5 minutes or Lily Desktop will exit`,
   });
 
   shell.openExternal('https://omegle.com');
@@ -246,7 +266,7 @@ function requireCaptcha() {
 function removeCaptchaTimer() {
   captchaError = false;
   M.toast({
-    html: `Captcha Solved!`
+    html: `Captcha Solved!`,
   });
   clearTimeout(captchaTimer);
 }
